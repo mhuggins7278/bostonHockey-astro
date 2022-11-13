@@ -1,0 +1,35 @@
+---
+const data = await fetch('https://statsapi.web.nhl.com/api/v1/schedule?teamId=6&season=20222023').then(res => res.json());
+const games = data.dates
+---
+
+
+<div class="day-of-week">
+  <div>Su</div>
+  <div>Mo</div>
+  <div>Tu</div>
+  <div>We</div>
+  <div>Th</div>
+  <div>Fr</div>
+  <div>Sa</div>
+</div>
+
+<div class="date-grid">
+  {
+    games.map((game: any) => {
+      return (
+          <span>{game.games[0].gameType}</span>
+      )
+    })
+  }
+</div>
+
+
+<style>
+.day-of-week,
+.date-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+</style>

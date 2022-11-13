@@ -1,0 +1,10 @@
+---
+const data = await fetch('https://statsapi.web.nhl.com/api/v1/schedule?teamId=6&season=20222023').then(res => res.json());
+const games = data.dates
+---
+
+
+
+<p>
+{JSON.stringify(games)}
+</p>
