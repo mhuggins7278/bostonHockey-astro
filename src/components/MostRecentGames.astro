@@ -1,10 +1,27 @@
 ---
-const data = await fetch('https://statsapi.web.nhl.com/api/v1/schedule?teamId=6&season=20222023').then(res => res.json());
-const games = data.dates
+import { startOfWeek, endOfWeek, format } from "date-fns";
+import CalendarItem from "./CalendarItem.astro";
+const startDate = format(startOfWeek(new Date()), "yyyy-MM-dd");
+const endDate = format(endOfWeek(new Date()), "yyyy-MM-dd");
+const baseUrl = "https://statsapi.web.nhl.com/api/v1";
+const url = `${baseUrl}/schedule?teamId=6&startDate=${startDate}&endDate=${endDate}`;
+const response = await fetch(url).then((res) => res.json());
+const games = Array(7).fill(null);
+if (response.dates.length === 0) {
+  //return a new array of 7 null items
+  return games;
+} else {
+  response.dates.forEach((date) => {
+    const dayOfWeek = new Date(date.date).getDay();
+    games[dayOfWeek] = date.games[0];
+  });
+}
 ---
 
-
-
-<p>
-{JSON.stringify(games)}
-</p>
+<div class="flex flex-row">
+  {
+    games.map((game, index) => {
+      return <CalendarItem game={game} />;
+    })
+  }
+</div>
