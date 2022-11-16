@@ -1,8 +1,66 @@
 ---
-const {game} = Astro.props;
-console.log(game)
+import { parseISO, format, intlFormat } from "date-fns";
+const { game, showDayOfWeek, gameIndex } = Astro.props;
+const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+let homeGame;
+let startTime;
+let date;
+let opponentId;
+let gameStatus;
+if (game) {
+   homeGame = game.teams.home.team.id === 6;
+   opponentId = homeGame
+    ? game.teams.away.team.id
+    : game.teams.home.team.id;
+   gameStatus = game.status.detailedState;
+
+  startTime = intlFormat(parseISO(game.gameDate), {
+    hour: "numeric",
+    minute: "numeric",
+    timeZoneName: "short",
+  });
+  date = intlFormat(parseISO(game.gameDate), {
+    month: "numeric",
+    day: "numeric",
+  });
+}
+
+function formatScoreLine () {
+  const homeScore = game.teams.home.score;
+  const awayScore = game.teams.away.score;
+  
+  return `${homeScore} - ${awayScore}`
+}
 ---
 
-<div> 
-{game}
+<div>
+  {
+    showDayOfWeek && (
+      <div class="text-center font-bold">{daysOfWeek[gameIndex]}</div>
+    )
+  }
+  <div
+    class={`w-28 h-36 rounded-lg border border-black justify-center  ${
+      homeGame ? "bg-yellow-400" : ""
+      }`
+    }
+  >
+    <div class="text-center text-sm">
+      <svg class="mx-auto" width="40" height="40">
+        <use xlink:href={`team-logos.svg#team-${opponentId}-20222023-light`}
+        ></use>
+      </svg>
+      {
+        gameStatus === "Scheduled" && (
+          <div>{date}</div>
+          <span>{startTime}</span>
+        )
+      }
+      {
+        gameStatus === "Final" && (
+        formatScoreLine
+        )
+      }
+    </div>
+  </div>
 </div>

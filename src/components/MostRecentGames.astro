@@ -1,5 +1,5 @@
 ---
-import { startOfWeek, endOfWeek, format } from "date-fns";
+import { startOfWeek, endOfWeek, format, getDay, parseISO } from "date-fns";
 import CalendarItem from "./CalendarItem.astro";
 const startDate = format(startOfWeek(new Date()), "yyyy-MM-dd");
 const endDate = format(endOfWeek(new Date()), "yyyy-MM-dd");
@@ -12,16 +12,19 @@ if (response.dates.length === 0) {
   return games;
 } else {
   response.dates.forEach((date) => {
-    const dayOfWeek = new Date(date.date).getDay();
+    const dayOfWeek = getDay(parseISO(date.date));
+    console.log(dayOfWeek);
     games[dayOfWeek] = date.games[0];
   });
 }
 ---
 
-<div class="flex flex-row">
+<div class="flex flex-row justify-around gap-1">
   {
     games.map((game, index) => {
-      return <CalendarItem game={game} />;
+      return (
+        <CalendarItem game={game} showDayOfWeek={true} gameIndex={index} />
+      );
     })
   }
 </div>
